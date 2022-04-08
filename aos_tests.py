@@ -9,7 +9,9 @@ class AOSPositiveTestCases(unittest.TestCase):
 
         methods.setUp()
         methods.create_new_user()
+        methods.validate_new_user_display()
         methods.log_out()
         methods.login(locators.new_username, locators.new_password)
+        methods.validate_new_user_display()
         methods.log_out()
         methods.teardown()

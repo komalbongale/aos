@@ -2,6 +2,7 @@ from faker import Faker
 fake = Faker(locale='en_CA')
 AOS_Url = 'https://advantageonlineshopping.com/#/'
 AOS_title = '\xa0Advantage Shopping'
+AOS_register = 'https://advantageonlineshopping.com/#/register'
 new_username = f'{fake.user_name()[:12]}'
 new_password = fake.password() [:12]
 email = fake.email()
