@@ -17,6 +17,11 @@ class AOSPositiveTestCases(unittest.TestCase):
         methods.log_out()
         methods.login(locators.new_username, locators.new_password)
         methods.validate_new_user_display()
+        methods.checkout_shopping_cart()
+        methods.log_out()
+        methods.login(locators.new_username, locators.new_password)
+        methods.validate_order_page()
+        methods.delete_order()
         methods.log_out()
         methods.teardown()
 

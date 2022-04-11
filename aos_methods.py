@@ -1,5 +1,7 @@
 import datetime
 from time import sleep
+from tokenize import String
+
 import aos_locators
 from selenium import webdriver
 from selenium.webdriver import Keys
@@ -272,8 +274,6 @@ def validate_social_media_link():
         driver.switch_to.window(b)
         driver.close()
         driver.switch_to.window(a)
-        sleep(1)
-        #driver.back()
         sleep(2)
         print(f'LINKEDIN is displayed and Clickable:')
         sleep(2)
@@ -299,6 +299,96 @@ def validate_contact_us_form():
         print(f'Contact Us form is validated:')
         sleep(2)
 
+
+
+def checkout_shopping_cart():
+    print('-------------------------* Checkout Shopping Cart *-------------------------')
+    if driver.current_url == aos_locators.AOS_Url:
+        driver.find_element(By.ID, 'speakersTxt').click()
+        sleep(3)
+        if driver.current_url == 'https://advantageonlineshopping.com/#/category/Speakers/4':
+            sleep(1)
+            driver.find_element(By.LINK_TEXT , 'HP Roar Plus Wireless Speaker').click()
+            sleep(2)
+            if driver.current_url == 'https://advantageonlineshopping.com/#/product/21':
+                sleep(2)
+                driver.find_element(By.XPATH, "//button[@name = 'save_to_cart']").click()
+                sleep(2)
+                driver.find_element(By.ID, 'menuCart').click()
+                sleep(2)
+                if driver.current_url == 'https://advantageonlineshopping.com/#/shoppingCart':
+                    sleep(1)
+                    driver.find_element(By.ID, 'checkOutButton').click()
+                    sleep(2)
+                    if driver.current_url == 'https://advantageonlineshopping.com/#/orderPayment':
+                        assert driver.find_element(By.XPATH, f'//label[contains(., "{aos_locators.full_name}")]').is_displayed()
+                        sleep(3)
+                        print(f'--- Full Name {aos_locators.full_name} is displayed on shipping details page---')
+                        sleep(2)
+                        driver.find_element(By.ID, 'next_btn').click()
+                        sleep(2)
+                        if driver.current_url == 'https://advantageonlineshopping.com/#/orderPayment':
+                            driver.find_element(By.XPATH, "//input[@name = 'safepay_username']").send_keys(aos_locators.new_username)
+                            sleep(2)
+                            driver.find_element(By.XPATH, "//input[@name = 'safepay_password']").send_keys(aos_locators.new_password)
+                            sleep(2)
+                            driver.find_element(By.ID, 'pay_now_btn_SAFEPAY').click()
+                            sleep(2)
+                            assert driver.find_element(By.XPATH, f'//span [contains(., "Thank you for buying with Advantage")]').is_displayed()
+                            sleep(2)
+                            print(f'--- Validated Order is created by validating Thank you for buying with Advantage message is displayed ---')
+                            sleep(2)
+                            tracking_number = driver.find_element(By.ID, 'trackingNumberLabel').text
+                            print(f' Tracking Number is : {tracking_number}')
+                            sleep(2)
+                            aos_locators.order_number = driver.find_element(By.ID, 'orderNumberLabel').text
+                            print(f' Order Number is : {aos_locators.order_number}')
+                            sleep(2)
+                            if driver.current_url == 'https://advantageonlineshopping.com/#/orderPayment':
+                                if driver.find_element(By.XPATH, f'//label[contains(., "{aos_locators.full_name}")]'):
+                                    sleep(2)
+                                    print(f'Fullname: {aos_locators.full_name} is validated in shipping details ')
+                                else:
+                                    print("something went wrong:")
+                                    sleep(2)
+                                if driver.find_element(By.XPATH, f'//label[contains(., "{aos_locators.phone_number1}")]'):
+                                    sleep(2)
+                                    print(f'Phone Number: {aos_locators.phone_number1} is validated in shipping details ')
+                                else:
+                                    print("something went wrong:")
+                                    sleep(2)
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+def validate_order_page():
+    print('-------------------------* Validate Order Page*-------------------------')
+    if driver.current_url == aos_locators.AOS_Url:
+        driver.find_element(By.ID, 'menuUser').click()
+        sleep(2)
+        driver.find_element(By.XPATH, '//*[@id="loginMiniTitle"]/label[2]').click()
+        sleep(2)
+        if driver.current_url == 'https://advantageonlineshopping.com/#/MyOrders':
+            order_element = driver.find_element(By.XPATH, f'//label[contains(text(), "{aos_locators.order_number}")]')
+            assert order_element.is_displayed()
+            sleep(1)
+            print(f' --- validate order is displayed --- confirmed!')
+            sleep(2)
+
+
+def delete_order():
+    print('-------------------------* Delete Order *-------------------------')
+    if driver.current_url == 'https://advantageonlineshopping.com/#/MyOrders':
+        driver.find_element(By.LINK_TEXT, 'REMOVE').click()
+        sleep(2)
+        driver.find_element(By.XPATH, f'//label[contains(text(), "CANCEL")]').click()
+        sleep(2)
+        print(f'Order is deleted ')
+        assert driver.find_element(By.XPATH, f'//label[contains(text(), "No orders")]').is_displayed()
+        sleep(2)
+        print(f'validated Order is deleted by validating "No orders" text displayed ')
+        sleep(2)
+#-----------------------------------------------------------------------------------------------------------------------------
+
 #setUp()
 #validate_home_page_texts_links()
 #validate_top_navigation_menu()
@@ -308,6 +398,11 @@ def validate_contact_us_form():
 #validate_new_user_display()
 #log_out()
 #login(aos_locators.new_username, aos_locators.new_password)
+#checkout_shopping_cart()
+#log_out()
+#login(aos_locators.new_username, aos_locators.new_password)
+#validate_order_page()
+#delete_order()
 #validate_new_user_display()
 #log_out()
 #teardown()
