@@ -14,3 +14,4 @@ city = fake.city()
 province = fake.province_abbr()
 postcode = fake.postcode_in_province()
 address = fake.address()[:45]
+description = fake.sentence(nb_words=10)
