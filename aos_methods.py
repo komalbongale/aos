@@ -1,21 +1,15 @@
 import datetime
 from time import sleep
-from tokenize import String
-
 import aos_locators
 from selenium import webdriver
-from selenium.webdriver import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from faker import Faker
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 s = Service(executable_path='../chromedriver.exe')
 driver = webdriver.Chrome(service=s)
 # ------------------------------------------------------------------------------
-
-def setUp():
+def setup():
     driver.maximize_window()  # Open web browser and maximize the window
     driver.implicitly_wait(30)  # wait for the web browser
     print(f'test started at:{datetime.datetime.now()}')
@@ -43,7 +37,7 @@ def teardown():  # function to end the session
 def create_new_user(): #create new user
     print('-------------------------* Create New User *-------------------------')
     if driver.current_url == aos_locators.AOS_Url and driver.title == aos_locators.AOS_title:
-
+        sleep(2)
         driver.find_element(By.ID, 'menuUserLink').click()
         sleep(2)
         driver.find_element(By.LINK_TEXT, 'CREATE NEW ACCOUNT').click()
@@ -87,6 +81,7 @@ def create_new_user(): #create new user
 
 def log_out(): #log out with new user
     print('-------------------------* Logout  User *-------------------------')
+    sleep(2)
     driver.find_element(By.ID, 'menuUserLink').click()
     sleep(2)
     driver.find_element(By.XPATH, '//*[@id="loginMiniTitle"]/label[3]').click()
@@ -98,6 +93,7 @@ def log_out(): #log out with new user
 def login(username,password ): #login with new user
     print('-------------------------* Login User *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
         driver.find_element(By.ID, 'menuUserLink').click()
         sleep(2)
         if driver.current_url == aos_locators.AOS_Url:
@@ -111,6 +107,7 @@ def login(username,password ): #login with new user
                 print(f'User is logged in successfully and you can see username at top menu: {aos_locators.new_username}')
             else:
                 print('something went wrong')
+            sleep(2)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -118,18 +115,21 @@ def login(username,password ): #login with new user
 def validate_new_user_display():  #Validate username is displayed
     print('-------------------------* Validate New User Display *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
         if driver.find_element(By.XPATH,  f'//a[contains(., "{aos_locators.new_username}")]'):
             sleep(3)
             print(f'--- Username {aos_locators.new_username} is displayed on Top right Menu ---')
         else:
             print("something went wrong:")
             sleep(3)
+        sleep(2)
 
 # ---------------------------------------------------------------------------------------------------------------------
 
 def validate_home_page_texts_links():   # check functionality text are displayed
     print('-------------------------* Validate Home Page Texts Links *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
         assert driver.find_element(By.XPATH, '//span[contains(., "SPEAKERS")]').is_displayed()
         driver.find_element(By.ID, 'speakersTxt').click()
         sleep(3)
@@ -206,7 +206,7 @@ def validate_home_page_texts_links():   # check functionality text are displayed
         print(f'Home page item POPULAR ITEMS 3 is displayed')
         assert driver.find_element(By.XPATH,  f'//span[contains(., "dvantage")]').is_displayed()
         print(f'Main Logo is displayed')
-        sleep(1)
+        sleep(2)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -227,7 +227,6 @@ def validate_top_navigation_menu():
         driver.find_element(By.ID, 'menuUser').click()
         sleep(2)
         driver.refresh()
-        # driver.find_element(By.CLASS_NAME, 'closeBtn loginPopUpCloseBtn').click()
         sleep(4)
         driver.find_element(By.ID, 'menuCart').click()
         sleep(2)
@@ -244,6 +243,7 @@ def validate_top_navigation_menu():
 def validate_social_media_link():
     print('-------------------------* Validate Social Media Link *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
         assert driver.find_element(By.XPATH, f'//h3[contains(., "FOLLOW US")]').is_displayed()
         print(f'FOLLOW US text is displayed')
         sleep(0.25)
@@ -252,37 +252,44 @@ def validate_social_media_link():
         a = driver.window_handles[0]
         b = driver.window_handles[1]
         driver.switch_to.window(b)
-        driver.close()
-        driver.switch_to.window(a)
-        sleep(2)
-        print(f'FACEBOOK is displayed and Clickable:')
-        sleep(2)
+        if driver.current_url == 'https://www.facebook.com/MicroFocus/':
+            driver.close()
+            driver.switch_to.window(a)
+            sleep(2)
+            print(f'FACEBOOK is displayed and Clickable:')
+            sleep(2)
         driver.find_element(By.XPATH, "//img[@name = 'follow_twitter']").click()
         sleep(3)
         a = driver.window_handles[0]
         b = driver.window_handles[1]
         driver.switch_to.window(b)
-        driver.close()
-        driver.switch_to.window(a)
-        sleep(2)
-        print(f'TWITTER is displayed and Clickable:')
+        if driver.current_url == 'https://twitter.com/MicroFocus':
+            driver.close()
+            driver.switch_to.window(a)
+            sleep(2)
+            print(f'TWITTER is displayed and Clickable:')
         sleep(0.25)
         driver.find_element(By.XPATH, "//img[@name = 'follow_linkedin']").click()
         sleep(3)
         a = driver.window_handles[0]
         b = driver.window_handles[1]
         driver.switch_to.window(b)
-        driver.close()
-        driver.switch_to.window(a)
-        sleep(2)
-        print(f'LINKEDIN is displayed and Clickable:')
-        sleep(2)
+        #url = 'https://www.linkedin.com/company/1024?trk=tyah&trkInfo=clickedVertical%3Ashowcase%2CclickedEntityId%3A1024%2Cidx%3A2-1-2%2CtarId%3A145431482.327%2Ctas%3Ahewlett%20packard%20enterprise%20software'
+        #if 'linkedin.com' in url:
+        if 'LinkedIn' in driver.title:
+            sleep(2)
+            driver.close()
+            driver.switch_to.window(a)
+            sleep(2)
+            print(f'LINKEDIN is displayed and Clickable:')
+            sleep(2)
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------
 def validate_contact_us_form():
     print('-------------------------* Validate Contact Us Form *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
-        sleep(1)
+        sleep(2)
         Select(driver.find_element(By.XPATH, "//select[@name = 'categoryListboxContactUs']")).select_by_visible_text('Speakers')
         sleep(2)
         Select(driver.find_element(By.XPATH, "//select[@name = 'productListboxContactUs']")).select_by_visible_text('HP Roar Wireless Speaker')
@@ -304,6 +311,7 @@ def validate_contact_us_form():
 def checkout_shopping_cart():
     print('-------------------------* Checkout Shopping Cart *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
         driver.find_element(By.ID, 'speakersTxt').click()
         sleep(3)
         if driver.current_url == 'https://advantageonlineshopping.com/#/category/Speakers/4':
@@ -317,7 +325,7 @@ def checkout_shopping_cart():
                 driver.find_element(By.ID, 'menuCart').click()
                 sleep(2)
                 if driver.current_url == 'https://advantageonlineshopping.com/#/shoppingCart':
-                    sleep(1)
+                    sleep(2)
                     driver.find_element(By.ID, 'checkOutButton').click()
                     sleep(2)
                     if driver.current_url == 'https://advantageonlineshopping.com/#/orderPayment':
@@ -361,8 +369,9 @@ def checkout_shopping_cart():
 
 #----------------------------------------------------------------------------------------------------------------------------------
 def validate_order_page():
-    print('-------------------------* Validate Order Page*-------------------------')
+    print('-------------------------* Validate Order Page *-------------------------')
     if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
         driver.find_element(By.ID, 'menuUser').click()
         sleep(2)
         driver.find_element(By.XPATH, '//*[@id="loginMiniTitle"]/label[2]').click()
@@ -371,13 +380,14 @@ def validate_order_page():
             order_element = driver.find_element(By.XPATH, f'//label[contains(text(), "{aos_locators.order_number}")]')
             assert order_element.is_displayed()
             sleep(1)
-            print(f' --- validate order is displayed --- confirmed!')
+            print(f' Validated order is displayed  --- confirmed!')
             sleep(2)
 
 
 def delete_order():
     print('-------------------------* Delete Order *-------------------------')
     if driver.current_url == 'https://advantageonlineshopping.com/#/MyOrders':
+        sleep(2)
         driver.find_element(By.LINK_TEXT, 'REMOVE').click()
         sleep(2)
         driver.find_element(By.XPATH, f'//label[contains(text(), "CANCEL")]').click()
@@ -385,16 +395,99 @@ def delete_order():
         print(f'Order is deleted ')
         assert driver.find_element(By.XPATH, f'//label[contains(text(), "No orders")]').is_displayed()
         sleep(2)
-        print(f'validated Order is deleted by validating "No orders" text displayed ')
+        print(f'Validated Order is deleted by validating "No orders" text displayed ')
         sleep(2)
 #-----------------------------------------------------------------------------------------------------------------------------
+def delete_user():
+    print('-------------------------* Delete User *-------------------------')
+    if driver.current_url == aos_locators.AOS_Url:
+        sleep(2)
+        driver.find_element(By.ID, 'menuUserLink').click()
+        sleep(2)
+        driver.find_element(By.XPATH, '//*[@id="loginMiniTitle"]/label[1]').click()
+        sleep(5)
+        assert driver.find_element(By.XPATH, f'//label[contains(text(), "{aos_locators.full_name}")]').is_displayed()
+        sleep(2)
+        print(f'Validated Fullname {aos_locators.full_name} is displayed in My account details')
+        sleep(3)
+        driver.find_element(By.CLASS_NAME , 'deleteBtnText').click()
+        sleep(3)
+        #assert driver.find_element(By.XPATH, f'//*[contains(@class, "deletePopupBtn deleteRed")]').is_displayed()
+        #sleep(2)
+        driver.find_element(By.XPATH, f'//*[contains(@class, "deletePopupBtn deleteRed")]').click()
+        sleep(2)
+        print('Confirmation message is displayed: Account deleted Successfully')
+        sleep(2)
+#--------------------------------------------------------------------------------------------------------------
 
+def delete_user_account():
+    print(f'*---------------------------------------~* DELETE USER ACCOUNT *~---------------------------------------*')
+    if driver.current_url == 'https://advantageonlineshopping.com/#/MyOrders':
+        sleep(1)
+        if driver.find_element(By.XPATH, f'//a[contains(., "{aos_locators.new_username}")]'):
+            print(f'Username: {aos_locators.new_username} is displayed at Top right Menu.')
+            sleep(2)
+        else:
+            print(f'User login not validated.')
+
+        driver.find_element(By.ID, 'menuUserLink').click()
+        sleep(2)
+        # Access user account details
+        driver.find_element(By.XPATH, '//*[@id="loginMiniTitle"]/label[1]').click()
+        sleep(1)
+
+        # Account details page before deletion
+        assert driver.find_element(By.XPATH, f'//label[contains(., "{aos_locators.full_name}")]').is_displayed()
+        sleep(3)
+        print(f'Account details page for user: "{aos_locators.full_name}" is displayed.')
+        assert driver.find_element(By.XPATH, '//button[contains(., "Delete Account")]').is_displayed()
+        popup = driver.find_element(By.XPATH, '//button[contains(., "Delete Account")]').is_displayed()
+        print(f'Delete popup is displayed: {popup}')
+        sleep(2)
+
+        # Click the Delete Account button
+        driver.find_element(By.CLASS_NAME, 'deleteBtnText').click()
+        sleep(5)
+       # assert driver.find_element(By.XPATH, '//*[contains(@class, "deletePopupBtn deleteRed")]').is_displayed()
+       # popup1 = driver.find_element(By.XPATH, '//*[contains(@class, "deletePopupBtn deleteRed")]').is_displayed()
+        #print(f'Delete Confirmation screen is displayed: {popup1}')
+        #sleep(2)
+        driver.find_element(By.XPATH, '//*[contains(@class, "deletePopupBtn deleteRed")]').click()
+        sleep(3)
+        print(f'Confirmation message is displayed: Account deleted successfully.')
+        sleep(4)
+        #print(f'User {aos_locators.full_name} with email address {aos_locators.email} is deleted!')
+
+#-----------------------------------------------------------------------------------------
+
+def validate_account_deleted():
+    sleep(2)
+    print('-------------------------* Validate Account Deleted *-------------------------')
+    if driver.current_url == aos_locators.AOS_Url:
+        sleep(3)
+        driver.find_element(By.ID, 'menuUserLink').click()
+        sleep(2)
+        if driver.current_url == aos_locators.AOS_Url:
+            driver.find_element(By.XPATH, "//input[@name = 'username']").send_keys(aos_locators.new_username)
+            sleep(2)
+            driver.find_element(By.XPATH, "//input[@name = 'password']").send_keys(aos_locators.new_password)
+            sleep(2)
+            driver.find_element(By.XPATH, "//button[@id = 'sign_in_btnundefined']").click()
+            sleep(2)
+            assert driver.find_element(By.XPATH, f'//label[contains(text(), "Incorrect user name or password.")]').is_displayed()
+            sleep(2)
+            print("Confirmed Account deleted by validating error message Incorrect username and password displayed ")
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------
 #setUp()
 #validate_home_page_texts_links()
 #validate_top_navigation_menu()
 #validate_contact_us_form()
 #validate_social_media_link()
 #create_new_user()
+#delete_user()
+#validate_account_deleted()
 #validate_new_user_display()
 #log_out()
 #login(aos_locators.new_username, aos_locators.new_password)

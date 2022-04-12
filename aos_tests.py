@@ -7,7 +7,7 @@ class AOSPositiveTestCases(unittest.TestCase):
     @staticmethod # signal to Unittest framework that this is a function inside the class (vs. @classmethod)
     def test_create_new_user(): # test_ in the name is mandatory
 
-        methods.setUp()
+        methods.setup()
         methods.validate_home_page_texts_links()
         methods.validate_top_navigation_menu()
         methods.validate_contact_us_form()
@@ -22,6 +22,11 @@ class AOSPositiveTestCases(unittest.TestCase):
         methods.login(locators.new_username, locators.new_password)
         methods.validate_order_page()
         methods.delete_order()
-        methods.log_out()
+        methods.delete_user_account()
+        methods.validate_account_deleted()
         methods.teardown()
+        
+        
+
+
 
